@@ -586,7 +586,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                     }
                     return;
                 }
-                if (blockObj.hasBlockChain || !blockObj.canMoveBlock)
+                if ( !blockObj.canMoveBlock)//blockObj.hasBlockChain ||
                 {
                     selectedBlock = null;
                     blockDrag = false;
