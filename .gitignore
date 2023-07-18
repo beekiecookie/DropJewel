@@ -1,0 +1,14 @@
+/Library/
+/obj/
+/Temp/
+/Logs/
+/UserSettings/
+/.vs/
+/.vscode/
+/*.csproj
+/*.sln
+/.vsconfig
+/Screenshot_*.png
+Build_Android/
+EditorUserSettings.asset
+Recordings/
