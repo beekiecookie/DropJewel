@@ -932,7 +932,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         }
     }
 
-    private List<GameObject> GetListObjPositionY(int y)
+    private List<GameObject> GetListObjPositionY(int y) //각 라인에 있는 블럭을 넣어서 반환함
     {
         List<GameObject> blocks = new List<GameObject>();
         for (int i = 0; i < gridWidth; i++)
@@ -967,25 +967,25 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                 int startY = blockObj.GetIntPositionY;
 
 
-                for (int k = startY; k >= 1; k--)
+                for (int k = startY; k >= 1; k--) //예) 3번째 라인일 경우 k=3, 3부터 작아지면서, 아래로 떨어질 수 있는지 체크
                 {
                     int startx = blockObj.GetIntPositionX;
-                    for (int h = 0; h < blockObj.GetBlockType; h++)
+                    for (int h = 0; h < blockObj.GetBlockType; h++) //예) 3칸짜리 블럭이라면, 바로 아래 라인 1,2,3칸을 하나씩 체크
                     {
                         int position = startx + h;
 
 
-                        if (gridInGame[k - 1].gridList[position] != null)
+                        if (gridInGame[k - 1].gridList[position] != null) //블럭이 한칸이라도 있으면 
                         {
 
-                            blockCanFall = false;
+                            blockCanFall = false; //떨어질 수 없음
                             break;
                         }
                     }
 
                     if (!blockCanFall) break;
 
-                    yBlock++;
+                    yBlock++; // 블럭이 없기 때문에 떨어질 수 있고, 몇 칸이나 떨어질 수 있는지 체크 (맨 위에서 맨 아래까지 떨어지는 경우도 있으니까)
                 }
 
 
@@ -998,9 +998,9 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
                     blockFallInBoard = true;
 
-                    blockObj.currentY = startY - yBlock;
+                    blockObj.currentY = startY - yBlock; //예) 2줄 떨어질 수 있으면 y값을 떨어진 이후로 변경 해줌.
                     int startX = (int)blockObj.transform.position.x;
-                    if (blockObj.Destroy) continue;
+                    if (blockObj.Destroy) continue; // 블럭이... 없다면??? 이 경우는 뭐지
                     blockObj.UpdateBoxObjBoard(startX, startY, blockObj.currentY);
 
 
