@@ -1105,7 +1105,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                 bool destroyLine = true;
                 for (int j = 0; j < gridWidth; j++)
                 {
-                    if (gridInGame[i].gridList[j] == null)
+                    if (gridInGame[i].gridList[j] == null)//한 줄에(i) 한 칸(j)이라도 비어져 있다면
                     {
                         destroyLine = false;
                         break;

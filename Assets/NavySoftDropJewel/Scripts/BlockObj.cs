@@ -160,13 +160,13 @@ public class BlockObj : MonoBehaviour
     {
         blocksSpecial.Clear();
 
-        if (hasBlockChain)
+        if (hasBlockChain) //체인 블럭이라면 스페셜 능력을 사용하지 않음. return해버림
         {
             blocksSpecial.Add(gameObject);
             return blocksSpecial;
         }
 
-        for (int i = 0; i < boxObjs.Count; i++)
+        for (int i = 0; i < boxObjs.Count; i++) //스페셜 블럭이 3칸짜리 블럭이면 count는 3
         {
 
 
@@ -176,15 +176,16 @@ public class BlockObj : MonoBehaviour
             int y = (int)position.y;
             bool top = (y + 1) <= PlayingController.gridHeight - 1 ? true : false;
             bool bottom = (y > 0) ? true : false;
-            if (top)
+            if (top) //블럭이 전체 y값에서 맨 위가 아니라면
             {
-                if (PlayingController.instance.gridInGame[y + 1].gridList[x] != null)
+                if (PlayingController.instance.gridInGame[y + 1].gridList[x] != null) // 한 줄위에 null이 아니라면 (위에 블럭이 있다면)
                 {
                     if (!blocksSpecial.Contains(PlayingController.instance.gridInGame[y + 1].gridList[x].parent.parent.gameObject))
                         blocksSpecial.Add(PlayingController.instance.gridInGame[y + 1].gridList[x].parent.parent.gameObject);
+                    //blocksSpecial 리스트에 스페셜 블럭으로 사라질 블럭 목록을 넣음. 이미 들어가있는 블럭이라면 (길이가 길어서) 제외함
                 }
             }
-            if (bottom)
+            if (bottom) //블럭이 전체 y값에서 맨 아래가 아니라면, 내용은 top과 동일.
             {
                 if (PlayingController.instance.gridInGame[y - 1].gridList[x] != null)
                 {
@@ -196,7 +197,7 @@ public class BlockObj : MonoBehaviour
 
         }
 
-        blocksSpecial.Add(gameObject);
+        blocksSpecial.Add(gameObject); //스페셜 블럭 자신도 넣어서 return
 
         return blocksSpecial;
     }
