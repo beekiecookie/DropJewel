@@ -1,4 +1,4 @@
- 
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,7 +108,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
     private Vector3 originPositionBlock = Vector3.zero;
     private Vector3 selectedPositionBlock = Vector3.zero;
     private GameObject shadowBlock;
-  
+
     private bool customPositionBooster = false;
     public bool BlockDrag { get { return blockDrag; } }
     [System.Serializable]
@@ -157,7 +157,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         highScore = (PopupController.isBoard8x8) ? DataInGame.BestScore8x8 : DataInGame.BestScore10x10;
         warningArea = (PopupController.isBoard8x8) ? warningArea8x10 : warningArea10x12;
 
-         
+
     }
 
 
@@ -169,6 +169,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
     {
         if (prevUpdateBlockState) return;
         this.blockState = blockState;
+        if (blockState == BlockState.FALL)
+            Hint();
 #if UNITY_EDITOR
         actions.Add(blockState.ToString());
 #endif
@@ -275,7 +277,6 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
 
 
-
                     break;
                 case BlockState.DELETE_LINE:
                     DeleteLine();
@@ -313,11 +314,11 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
                     StartCoroutine(DeleteAllBlock(.1f));
 
-                   
+
                     yield return new WaitForSeconds(2f);
-                    
+
                     ClearAllDataBeginGame(true);
-                    
+
                     break;
 
                 case BlockState.SECOND_CHANCE:
@@ -365,7 +366,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         if (pauseGame)
         {
             Time.timeScale = 1;
-            Timer.Schedule(this, 0.5f, () => {
+            Timer.Schedule(this, 0.5f, () =>
+            {
                 Time.timeScale = 0;
             });
 
@@ -385,7 +387,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
     public void GameOver()
     {
-       
+
 
         StartCoroutine(DeleteAllBlock(0.02f));
 
@@ -409,7 +411,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
             SetBlockState(BlockState.NONE);
             StopCoroutine(ManualUpdate());
-            StartCoroutine(DeleteAllBlock(0.02f,0,false));
+            StartCoroutine(DeleteAllBlock(0.02f, 0, false));
             ClearAllDataBeginGame(false);
         });
 
@@ -540,8 +542,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         RaycastHit2D raycastHit2D = Physics2D.Raycast(ray2D.origin, ray2D.direction, 0f, 1);
         bool useBooster = false;
 
-      
-        if(Input.touchCount>1) return;
+
+        if (Input.touchCount > 1) return;
 
 
         if (Input.GetMouseButtonDown(0))
@@ -586,7 +588,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                     }
                     return;
                 }
-                if ( !blockObj.canMoveBlock)//blockObj.hasBlockChain ||
+                if (!blockObj.canMoveBlock)//blockObj.hasBlockChain ||
                 {
                     selectedBlock = null;
                     blockDrag = false;
@@ -606,9 +608,9 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                 shadowBlock = Instantiate(selectedBlock, selectedBlock.transform.position, selectedBlock.transform.rotation);
                 BlockObj fakeBlock = shadowBlock.GetComponent<BlockObj>();
                 fakeBlock.ActiveOutLineTutorial(false);
-                LeanTween.alpha(shadowBlock.transform.Find("BlockImage").gameObject, .4f, 0f)  ;
- 
-               // shadowBlock.transform.Find("BlockImage").GetComponent<SpriteRenderer>().sortingOrder = 16;
+                LeanTween.alpha(shadowBlock.transform.Find("BlockImage").gameObject, .4f, 0f);
+
+                // shadowBlock.transform.Find("BlockImage").GetComponent<SpriteRenderer>().sortingOrder = 16;
 
                 MoveGuide.position = new Vector3(selectedBlock.transform.position.x, MoveGuide.position.y, 0f);
                 MoveGuide.GetChild(0).localScale = new Vector3((float)blockObj.GetBlockType, MoveGuide.GetChild(0).localScale.y, 0f);
@@ -886,11 +888,11 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
 
 
- 
+
                 BlocksInGame[i].blocks[j].currentY = (int)position.y;
                 LeanTween.move(block.gameObject, position, timeAnimation);
-               
- 
+
+
 
             }
         }
@@ -1008,7 +1010,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                     LeanTween.moveY(blockObj.gameObject, (float)(startY - yBlock), 0.3f).setEase(anicurve);
                     //Animation Fall Block
                     //blockObj.transform.DOMoveY((float)(startY - yBlock), 0.3f, false).SetEase(anicurve);
- 
+
 
                 }
             }
@@ -1038,9 +1040,9 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                     BlockObj blockObj = blocksObj[j].GetComponent<BlockObj>();
                     blockObj.DestroyBlock();
                     LeanTween.alpha(blockObj.GetBlockImage.gameObject, 0, 0.2f).setEase(LeanTweenType.easeOutQuad).setDelay(blockObj.WaitTimeImageFade());
-                    
 
- 
+
+
                     SoundController.instance.BlockBroken();
                 }
             }
@@ -1165,8 +1167,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
             {
                 blockObj.ClearBoxBlock();
                 blockObj.DestroyBlock();
- 
-                 LeanTween.alpha(blockObj.GetBlockImage.gameObject, 0, 0.2f).setEase(LeanTweenType.easeOutQuad).setDelay(blockObj.WaitTimeImageFade());
+
+                LeanTween.alpha(blockObj.GetBlockImage.gameObject, 0, 0.2f).setEase(LeanTweenType.easeOutQuad).setDelay(blockObj.WaitTimeImageFade());
 
             }
             else
@@ -1254,5 +1256,42 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         }
         bestScoreText.text = highScore.ToString();
         currentScoreText.text = currentScore.ToString();
+    }
+
+    public void Hint()
+    {
+        string empty = "";
+        for (int i = 0; i < gridHeight; i++)
+        {
+            empty += i.ToString() + " Line :";
+            int cnt = 0;
+            bool betweenEmpty = false;
+            List<GameObject> blockCntBetween = new List<GameObject>();
+            for (int j = 0; j < gridWidth; j++)
+            {
+                if (gridInGame[i].gridList[j] == null)//한 줄에(i) 한 칸(j)이라도 비어져 있다면
+                {
+                    if (cnt >= 1 && betweenEmpty && blockCntBetween.Count > 1)
+                    {
+                        betweenEmpty = false;
+                    }
+                    cnt++;
+                }
+                else
+                {
+                    betweenEmpty = true;
+                    if (cnt > 0 && !blockCntBetween.Contains(gridInGame[i].gridList[j].parent.parent.gameObject))
+                    {
+                        blockCntBetween.Add(gridInGame[i].gridList[j].parent.parent.gameObject);
+                    }
+                }
+            }
+            if (!betweenEmpty)
+                empty += cnt.ToString() + " / " + blockCntBetween.Count + "\n";
+            else
+                empty += cnt.ToString() + "\n";
+        }
+
+        Debug.Log(empty);
     }
 }
