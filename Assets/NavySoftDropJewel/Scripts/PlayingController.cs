@@ -170,7 +170,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         if (prevUpdateBlockState) return;
         this.blockState = blockState;
         if (blockState == BlockState.FALL)
-            Hint();
+            //Hint();
+            HintStep1();
 #if UNITY_EDITOR
         actions.Add(blockState.ToString());
 #endif
@@ -1258,7 +1259,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         currentScoreText.text = currentScore.ToString();
     }
 
-    public void Hint()
+    public void Hint() //빈칸 사이에 있는 블럭이 1개일 경우 양옆 빈칸 갯수와 블럭의 길이를 알 수 있음
     {
         string empty = "";
         BlockObj blockObj = null;
@@ -1276,6 +1277,72 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                         if (j + 1 + blockObj.GetBlockType < gridWidth && gridInGame[i].gridList[j + 1 + blockObj.GetBlockType] == null)
                             empty += blockObj.GetBlockType.ToString() + ", ";
                     }
+                }
+            }
+            empty += "\n";
+        }
+        Debug.Log(empty);
+    }
+
+    void HintStep1() //빈칸이 있는 줄, 윗줄에 해당하는 크기의 블럭이 있고 이동이 가능한지 
+    {
+        string empty = "";
+        BlockObj blockObj = null;
+        int emptyCnt = 0;
+        for (int i = 0; i < gridHeight; i++)
+        {
+            empty += i.ToString() + " Line---";
+            for (int j = 0; j < gridWidth; j++)
+            {
+                if (gridInGame[i].gridList[j] == null)
+                {
+                    emptyCnt++;
+                    if (j + 1 < gridWidth && i + 1 < gridHeight && gridInGame[i].gridList[j + 1] != null)
+                    {
+                        for (int k = 0; k < gridWidth; k++)
+                        {
+                            if (gridInGame[i + 1].gridList[k] != null)
+                            {
+                                blockObj = gridInGame[i + 1].gridList[k].parent.parent.GetComponent<BlockObj>();
+                                if (emptyCnt == blockObj.GetBlockType)
+                                {
+                                    //empty += "\n 빈칸 :" + emptyCnt + ", 위에 블럭있음 x:" + k;
+                                    if (k > i) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
+                                    {
+                                        for (int right = k; right > i + 1; right--)
+                                        {
+                                            if (gridInGame[i + 1].gridList[right] != null)
+                                                break;
+
+                                            if (right == i)
+                                                empty += "\n" + k + "에서 오른쪽으로 이동!";
+                                        }
+                                    }
+                                    else if (k < i) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
+                                    {
+                                        for (int left = 0; left < i + 1; left++)
+                                        {
+                                            if (gridInGame[i + 1].gridList[left] != null)
+                                                break;
+
+                                            if (left == i)
+                                                empty += "\n" + k + "에서 왼쪽으로 이동!";
+                                        }
+                                    }
+
+
+
+
+
+                                    k += blockObj.GetBlockType - 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    emptyCnt = 0;
                 }
             }
             empty += "\n";
