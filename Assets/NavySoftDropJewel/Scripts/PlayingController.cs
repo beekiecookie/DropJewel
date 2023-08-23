@@ -1261,37 +1261,25 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
     public void Hint()
     {
         string empty = "";
+        BlockObj blockObj = null;
         for (int i = 0; i < gridHeight; i++)
         {
             empty += i.ToString() + " Line :";
-            int cnt = 0;
-            bool betweenEmpty = false;
-            List<GameObject> blockCntBetween = new List<GameObject>();
             for (int j = 0; j < gridWidth; j++)
             {
-                if (gridInGame[i].gridList[j] == null)//한 줄에(i) 한 칸(j)이라도 비어져 있다면
+                if (gridInGame[i].gridList[j] == null)
                 {
-                    if (cnt >= 1 && betweenEmpty && blockCntBetween.Count > 1)
+                    empty += "0, ";
+                    if (j + 1 < gridWidth && gridInGame[i].gridList[j + 1] != null)
                     {
-                        betweenEmpty = false;
-                    }
-                    cnt++;
-                }
-                else
-                {
-                    betweenEmpty = true;
-                    if (cnt > 0 && !blockCntBetween.Contains(gridInGame[i].gridList[j].parent.parent.gameObject))
-                    {
-                        blockCntBetween.Add(gridInGame[i].gridList[j].parent.parent.gameObject);
+                        blockObj = gridInGame[i].gridList[j + 1].parent.parent.GetComponent<BlockObj>();
+                        if (j + 1 + blockObj.GetBlockType < gridWidth && gridInGame[i].gridList[j + 1 + blockObj.GetBlockType] == null)
+                            empty += blockObj.GetBlockType.ToString() + ", ";
                     }
                 }
             }
-            if (!betweenEmpty)
-                empty += cnt.ToString() + " / " + blockCntBetween.Count + "\n";
-            else
-                empty += cnt.ToString() + "\n";
+            empty += "\n";
         }
-
         Debug.Log(empty);
     }
 }
