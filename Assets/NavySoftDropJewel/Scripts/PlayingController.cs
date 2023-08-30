@@ -1298,58 +1298,70 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                 {
                     emptyCnt++;
                     if (w + 1 < gridWidth && h + 1 < gridHeight && gridInGame[h].gridList[w + 1] != null)
-                        // 보드의 가로,세로길이를 넘지 않고 && && 빈칸의 옆칸에 블럭이 있다면 (빈칸 길이 측정이 끝남)
+                    // 보드의 가로,세로길이를 넘지 않고 && && 빈칸의 옆칸에 블럭이 있다면 (빈칸 길이 측정이 끝남)
                     {
-                        for (int b = 0; b < gridWidth; b++) //빈칸과 같은 길이의 블럭을 바로 윗줄에서 찾기
+                        bool onlyEmpty = false; //해당 라인 하나의 빈칸인지 체크 (힌트가 가능한지.) 빈칸이 두개라면 힌트가 불가함
+                        for (int w2 = w + emptyCnt; w2 < gridWidth; w2++)
                         {
-                            if (gridInGame[h + 1].gridList[b] != null)
+                            if (gridInGame[h].gridList[w2] == null)
                             {
-                                blockObj = gridInGame[h + 1].gridList[b].parent.parent.GetComponent<BlockObj>();
-                                if (emptyCnt == blockObj.GetBlockType)
-                                {
-                                    //w: 빈칸이 있는 x, b: 같은 길이의 블럭이 있는 x
-                                    //Debug.Log("h:" + h +", b:" + b + ", w:" + w);
-                                    if (b > w) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
-                                    {
-                                        for (int right = b - 1; right >= w; right--)
-                                        {
-                                            if (gridInGame[h + 1].gridList[right] != null)
-                                            {
-                                                //Debug.Log("오른쪽 길이가 같은 블록 " + b + ", 길막 " + right);
-                                                break;
-                                            }
-
-                                            if (right == w)
-                                            {
-                                                log += "\n" + b + "에서 왼쪽으로 이동!";
-                                            }
-                                        }
-                                    }
-                                    else if (b < w) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
-                                    {
-                                        for (int left = b + 1; left <= w; left++)
-                                        {
-                                            if (gridInGame[h + 1].gridList[left] != null)
-                                            {
-                                                //Debug.Log("왼쪽 길이가 같은 블록 " + b + ", 길막 " + left);
-                                                break;
-                                            }
-
-                                            if (left == w)
-                                            {
-                                                log += "\n" + b + "에서 오른쪽으로 이동!";
-                                            }
-                                        }
-                                    }
-
-
-
-
-
-                                    b += blockObj.GetBlockType - 1;
-                                }
+                                onlyEmpty = true;
+                                w = gridWidth; //해당 줄은 더 검색하지 않도록, w break
+                                log += "\n다른 빈칸이 더 있음";
+                                goto NextLine;
                             }
                         }
+                        if (!onlyEmpty)
+                            for (int b = 0; b < gridWidth; b++) //빈칸과 같은 길이의 블럭을 바로 윗줄에서 찾기
+                            {
+                                if (gridInGame[h + 1].gridList[b] != null)
+                                {
+                                    blockObj = gridInGame[h + 1].gridList[b].parent.parent.GetComponent<BlockObj>();
+                                    if (emptyCnt == blockObj.GetBlockType)
+                                    {
+                                        //w: 빈칸이 있는 x, b: 같은 길이의 블럭이 있는 x
+                                        //Debug.Log("h:" + h +", b:" + b + ", w:" + w);
+                                        if (b > w) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
+                                        {
+                                            for (int right = b - 1; right >= w; right--)
+                                            {
+                                                if (gridInGame[h + 1].gridList[right] != null)
+                                                {
+                                                    //Debug.Log("오른쪽 길이가 같은 블록 " + b + ", 길막 " + right);
+                                                    break;
+                                                }
+
+                                                if (right == w)
+                                                {
+                                                    log += "\n" + b + "에서 왼쪽으로 이동!";
+                                                }
+                                            }
+                                        }
+                                        else if (b < w) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
+                                        {
+                                            for (int left = b + 1; left <= w; left++)
+                                            {
+                                                if (gridInGame[h + 1].gridList[left] != null)
+                                                {
+                                                    //Debug.Log("왼쪽 길이가 같은 블록 " + b + ", 길막 " + left);
+                                                    break;
+                                                }
+
+                                                if (left == w)
+                                                {
+                                                    log += "\n" + b + "에서 오른쪽으로 이동!";
+                                                }
+                                            }
+                                        }
+
+
+
+
+
+                                        b += blockObj.GetBlockType - 1;
+                                    }
+                                }
+                            }
                     }
                 }
                 else
@@ -1357,6 +1369,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                     emptyCnt = 0;
                 }
             }
+            NextLine: log += "\n점프!";
             log += "\n";
         }
         Debug.Log(log);
