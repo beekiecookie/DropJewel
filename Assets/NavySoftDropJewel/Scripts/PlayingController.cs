@@ -1320,26 +1320,29 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                                     if (emptyCnt == blockObj.GetBlockType)
                                     {
                                         //w: 빈칸이 있는 x, b: 같은 길이의 블럭이 있는 x
-                                        //Debug.Log("h:" + h +", b:" + b + ", w:" + w);
-                                        if (b > w) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
+                                        int tempW = w - emptyCnt;
+                                        tempW++;
+                                        Debug.Log("**b:" + b + ", tempW:" + tempW + ", w:" + w + ", h:" + h + ", \nemptyCnt:" + emptyCnt + ", GetBlockType:" + blockObj.GetBlockType);
+                                        if (b > tempW) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
                                         {
-                                            for (int right = b - 1; right >= w; right--)
+                                            for (int right = b - 1; right >= tempW; right--)
                                             {
+                                                Debug.Log("\n****right:" + right);
                                                 if (gridInGame[h + 1].gridList[right] != null)
                                                 {
-                                                    //Debug.Log("오른쪽 길이가 같은 블록 " + b + ", 길막 " + right);
+                                                    Debug.Log("\n******길막");
                                                     break;
                                                 }
 
-                                                if (right == w)
+                                                if (right == tempW)
                                                 {
-                                                    log += "\n" + b + "에서 왼쪽으로 이동!";
+                                                    log += "\n x: " + b + " y: " + (h + 1) + "에서 왼쪽으로 " + (b - tempW) + "칸 이동!";
                                                 }
                                             }
                                         }
-                                        else if (b < w) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
+                                        else if (b < tempW) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
                                         {
-                                            for (int left = b + 1; left <= w; left++)
+                                            for (int left = b + 1; left <= tempW; left++)
                                             {
                                                 if (gridInGame[h + 1].gridList[left] != null)
                                                 {
@@ -1347,9 +1350,9 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                                                     break;
                                                 }
 
-                                                if (left == w)
+                                                if (left == tempW)
                                                 {
-                                                    log += "\n" + b + "에서 오른쪽으로 이동!";
+                                                    log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (tempW - b) + "칸 이동!";
                                                 }
                                             }
                                         }
