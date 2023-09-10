@@ -1375,6 +1375,10 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                             emptyCnt[1] = w + 1 - emptyCnt[0];
                         }
                     }
+                    else if(w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 해결 중)
+                    {
+                        emptyCnt[1] = w + 1 - emptyCnt[0];
+                    }
                 }
                 else
                 {
