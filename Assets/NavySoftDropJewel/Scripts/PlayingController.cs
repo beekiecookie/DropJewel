@@ -1308,10 +1308,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                             {
                                 for (int right = b - 1; right >= emptyCnt[1]; right--)
                                 {
-                                    Debug.Log("\n****right:" + right);
                                     if (gridInGame[h + 1].gridList[right] != null)
                                     {
-                                        Debug.Log("\n******길막");
                                         break;
                                     }
 
@@ -1323,18 +1321,22 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                             }
                             else if (b < emptyCnt[1]) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
                             {
-                                for (int left = b + 1; left <= emptyCnt[1]; left++)
+                                //log += "\n <-----";
+                                for (int left = b; left <= emptyCnt[1]; left++)
                                 {
-                                    if (gridInGame[h + 1].gridList[left] != null)
-                                    {
-                                        //Debug.Log("왼쪽 길이가 같은 블록 " + b + ", 길막 " + left);
-                                        break;
-                                    }
-
+                                    //log += "\n #left: " + left + ", b: " + b + ", [left]: " + (left + (emptyCnt[0]));
                                     if (left == emptyCnt[1])
                                     {
                                         log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (emptyCnt[1] - b) + "칸 이동!";
                                     }
+
+                                    if (gridInGame[h + 1].gridList[left + (emptyCnt[0])] != null)
+                                    {
+                                        //log += "\n !null";
+                                        break;
+                                    }
+
+                                    
                                 }
                             }
 
@@ -1372,7 +1374,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                             emptyCnt[1] = w + 1 - emptyCnt[0];
                         }
                     }
-                    else if(w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 )
+                    else if (w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 )
                     {
                         emptyCnt[1] = w + 1 - emptyCnt[0];
                     }
