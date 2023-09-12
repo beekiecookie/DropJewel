@@ -1289,66 +1289,63 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         string log = "";
         BlockObj blockObj = null; //블럭의 길이를 알기위해 필요함 .GetBlockType
         //int emptyCnt = 0; //빈칸의 길이
-        for (int h = 0; h < gridHeight; h++)
+        for (int h = 0; h < (gridHeight - 1); h++)//(gridHeight - 1) 맨 윗줄은 위에 블럭이 없기때문에 그 아랫줄까지만 검사
         {
             log += h.ToString() + " Line---";
             int[] emptyCnt = FindEmptyCnt(h);
             if (emptyCnt[1] != 100)
             {
-                log += "\n 빈칸있음 크기: " + emptyCnt[0] + " 위치: " + h + ", " + emptyCnt[1];
-                //for (int b = 0; b < gridWidth; b++) //빈칸과 같은 길이의 블럭을 바로 윗줄에서 찾기
-                //{
-                //    if (gridInGame[h + 1].gridList[b] != null)
-                //    {
-                //        blockObj = gridInGame[h + 1].gridList[b].parent.parent.GetComponent<BlockObj>();
-                //        if (emptyCnt == blockObj.GetBlockType)
-                //        {
-                //            //w: 빈칸이 있는 x, b: 같은 길이의 블럭이 있는 x
-                //            int tempW = w - emptyCnt;
-                //            tempW++;
-                //            Debug.Log("**b:" + b + ", tempW:" + tempW + ", w:" + w + ", h:" + h + ", \nemptyCnt:" + emptyCnt + ", GetBlockType:" + blockObj.GetBlockType);
-                //            if (b > tempW) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
-                //            {
-                //                for (int right = b - 1; right >= tempW; right--)
-                //                {
-                //                    Debug.Log("\n****right:" + right);
-                //                    if (gridInGame[h + 1].gridList[right] != null)
-                //                    {
-                //                        Debug.Log("\n******길막");
-                //                        break;
-                //                    }
+                log += "\n 빈칸 크기: " + emptyCnt[0] + " 위치: " + h + ", " + emptyCnt[1];
+                for (int b = 0; b < gridWidth; b++) //빈칸과 같은 길이의 블럭을 바로 윗줄에서 찾기
+                {
+                    if (gridInGame[h + 1].gridList[b] != null)
+                    {
+                        blockObj = gridInGame[h + 1].gridList[b].parent.parent.GetComponent<BlockObj>();
+                        if (emptyCnt[0] == blockObj.GetBlockType)
+                        {
+                            //Debug.Log("**b:" + b + ", tempW:" + tempW + ", w:" + w + ", h:" + h + ", \nemptyCnt:" + emptyCnt + ", GetBlockType:" + blockObj.GetBlockType);
+                            if (b > emptyCnt[1]) //빈칸과 같은 사이즈의 블럭이 오른쪽에 있음
+                            {
+                                for (int right = b - 1; right >= emptyCnt[1]; right--)
+                                {
+                                    Debug.Log("\n****right:" + right);
+                                    if (gridInGame[h + 1].gridList[right] != null)
+                                    {
+                                        Debug.Log("\n******길막");
+                                        break;
+                                    }
 
-                //                    if (right == tempW)
-                //                    {
-                //                        log += "\n x: " + b + " y: " + (h + 1) + "에서 왼쪽으로 " + (b - tempW) + "칸 이동!";
-                //                    }
-                //                }
-                //            }
-                //            else if (b < tempW) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
-                //            {
-                //                for (int left = b + 1; left <= tempW; left++)
-                //                {
-                //                    if (gridInGame[h + 1].gridList[left] != null)
-                //                    {
-                //                        //Debug.Log("왼쪽 길이가 같은 블록 " + b + ", 길막 " + left);
-                //                        break;
-                //                    }
+                                    if (right == emptyCnt[1])
+                                    {
+                                        log += "\n x: " + b + " y: " + (h + 1) + "에서 왼쪽으로 " + (b - emptyCnt[1]) + "칸 이동!";
+                                    }
+                                }
+                            }
+                            else if (b < emptyCnt[1]) //빈칸과 같은 사이즈의 블럭이 왼쪽에 있음
+                            {
+                                for (int left = b + 1; left <= emptyCnt[1]; left++)
+                                {
+                                    if (gridInGame[h + 1].gridList[left] != null)
+                                    {
+                                        //Debug.Log("왼쪽 길이가 같은 블록 " + b + ", 길막 " + left);
+                                        break;
+                                    }
 
-                //                    if (left == tempW)
-                //                    {
-                //                        log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (tempW - b) + "칸 이동!";
-                //                    }
-                //                }
-                //            }
+                                    if (left == emptyCnt[1])
+                                    {
+                                        log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (emptyCnt[1] - b) + "칸 이동!";
+                                    }
+                                }
+                            }
 
 
 
 
 
-                //            b += blockObj.GetBlockType - 1;
-                //        }
-                //    }
-                //}
+                            b += blockObj.GetBlockType - 1;
+                        }
+                    }
+                }
             }
 
 
@@ -1375,7 +1372,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                             emptyCnt[1] = w + 1 - emptyCnt[0];
                         }
                     }
-                    else if(w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 해결 중)
+                    else if(w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 )
                     {
                         emptyCnt[1] = w + 1 - emptyCnt[0];
                     }
