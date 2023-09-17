@@ -1320,7 +1320,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
                                     if (right == emptyCnt[1])
                                     {
-                                        log += "\n x: " + b + " y: " + (h + 1) + "에서 왼쪽으로 " + (b - emptyCnt[1]) + "칸 이동!";
+                                        log += "\n  " + (h + 1) + ", " + b + " 에서 왼쪽으로 " + (b - emptyCnt[1]) + "칸 이동!";
                                     }
                                 }
                             }
@@ -1332,7 +1332,7 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                                     //log += "\n #left: " + left + ", b: " + b + ", [left]: " + (left + (emptyCnt[0]));
                                     if (left == emptyCnt[1])
                                     {
-                                        log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (emptyCnt[1] - b) + "칸 이동!";
+                                        log += "\n  " + (h + 1) + ", " + b + " 에서 오른쪽으로 " + (emptyCnt[1] - b) + "칸 이동!";
                                     }
                                     //Debug.Log("```" + (h + 1) + "," + left + ", " + emptyCnt[0]);
                                     if (left + (emptyCnt[0]) < 8)
