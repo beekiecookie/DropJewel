@@ -117,6 +117,8 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         public List<BlockObj> blocks = new List<BlockObj>();
     }
 
+    float hintTime = 0; // 아무동작없이 3초가 지나면 힌트 실행
+
     #region Unity Method
     private void Awake()
     {
@@ -171,9 +173,9 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         this.blockState = blockState;
         if (blockState == BlockState.FALL)
             //Hint();
-            HintStep1();
+            //HintStep1();
 #if UNITY_EDITOR
-        actions.Add(blockState.ToString());
+            actions.Add(blockState.ToString());
 #endif
     }
 
@@ -549,13 +551,12 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
 
         if (Input.GetMouseButtonDown(0))
         {
-
             if (selectedBlock != null || currentGameState != GameState.PLAY)
             {
                 return;
             }
 
-
+            hintTime = 0;
 
 
             if (raycastHit2D.collider != null && raycastHit2D.transform.gameObject.tag == "Block" && raycastHit2D.transform.position.y >= 0f)
@@ -671,11 +672,17 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         }
 
 
+        if (hintTime > 3 && hintTime < 100)
+        {
+            HintStep1();
+            hintTime = 100;
+        }
 
+        else
+            hintTime += Time.deltaTime;
 
         if (Input.GetMouseButtonUp(0) && !useBooster)
         {
-
             blockDrag = false;
             if (MoveGuide != null)
                 MoveGuide.gameObject.SetActive(false);
@@ -690,8 +697,6 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
             bool setPosition = true;
 
             BlockObj blockObj = selectedBlock.GetComponent<BlockObj>();
-
-
 
 
 
@@ -1329,14 +1334,17 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                                     {
                                         log += "\n x: " + b + " y: " + (h + 1) + "에서 오른쪽으로 " + (emptyCnt[1] - b) + "칸 이동!";
                                     }
-
-                                    if (gridInGame[h + 1].gridList[left + (emptyCnt[0])] != null)
+                                    //Debug.Log("```" + (h + 1) + "," + left + ", " + emptyCnt[0]);
+                                    if (left + (emptyCnt[0]) < 8)
                                     {
-                                        //log += "\n !null";
-                                        break;
+                                        if (gridInGame[h + 1].gridList[left + (emptyCnt[0])] != null)
+                                        {
+                                            //log += "\n !null";
+                                            break;
+                                        }
                                     }
 
-                                    
+
                                 }
                             }
 
@@ -1372,11 +1380,20 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
                         if (gridInGame[h].gridList[w + 1] != null)
                         {
                             emptyCnt[1] = w + 1 - emptyCnt[0];
+
+                            if (UnderEmpty(h, emptyCnt))
+                                emptyCnt[1] = 100;
+                            //UnderEmpty(h, emptyCnt) ? emptyCnt[1] = w + 1 - emptyCnt[0] : emptyCnt[1] = 100;
+
                         }
                     }
                     else if (w == 7 && emptyCnt[0] != 8) //가로 끝이라면 (노션 FindEmptyCnt() 버그1 )
                     {
                         emptyCnt[1] = w + 1 - emptyCnt[0];
+
+                        if (UnderEmpty(h, emptyCnt))
+                            emptyCnt[1] = 100;
+                        // emptyCnt[1] = w + 1 - emptyCnt[0];
                     }
                 }
                 else
@@ -1389,5 +1406,24 @@ public class PlayingController : MonoBehaviour, ISetUpWhenPlay
         }
 
         return emptyCnt;
+    }
+
+    bool UnderEmpty(int h, int[] emptyCnt)
+    {
+        if (h <= 0)
+            return false;
+
+
+        for (int i = 0; i < emptyCnt[0]; i++)
+        {
+            //Debug.Log("```" + h + ", " + emptyCnt[0] + ", " + emptyCnt[1] + ", " + i + "```");
+            if (gridInGame[h - 1].gridList[emptyCnt[1] + i] != null)
+            {
+                //Debug.Log("```" + (h-1) + ", " + emptyCnt[1] + ", " + emptyCnt[0] + " 빈 없```");
+                return false;
+            }
+        }
+        //Debug.Log("```" + (h-1) + ", " + emptyCnt[1] + ", " + emptyCnt[0] + "빈 있```");
+        return true;
     }
 }
